@@ -30,7 +30,7 @@ export default function SignIn() {
           dispatch(loaderActionStart())
           signInRequest(values).then((res:any) => {
             console.log(res.data, "---------res.data---------")
-            if (res.data) {
+            if (res.status === 200) {
                 localStorage.setItem("token", res.data.access)
                 localStorage.setItem("userId", res.data.id)
                 localStorage.setItem("email", res.data.email)
@@ -63,7 +63,7 @@ export default function SignIn() {
                 dispatch(
                     errorToast({
                     toast: true,
-                    message: res.data.message,
+                    message: res.data.detail,
                     })
                 );
             }

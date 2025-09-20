@@ -1,4 +1,4 @@
-import { axiosGet, axiosPatch, axiosPost, axiosPut } from "../axios/axios-config";
+import { axiosDelete, axiosGet, axiosPatch, axiosPost, axiosPut } from "../axios/axios-config";
 
 
 
@@ -23,4 +23,8 @@ export const updateEventOrganizerRequest = async (event_id: number, data: any) =
 
 export const getOrganizerEventsDetailsRequest = async (event_id: number) => {
     return await axiosGet(`/api/organizer/events/${event_id}/`);
+};
+
+export const deleteEventOrganizerRequest = async (event_id: number) => {
+    return await axiosDelete(`/api/organizer/events/${event_id}/`);
 };

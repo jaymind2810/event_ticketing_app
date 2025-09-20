@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { createEventOrganizerRequest, organizerEventsListRequest, updateEventOrganizerRequest } from "../../services/organizerRequests";
+import { createEventOrganizerRequest, deleteEventOrganizerRequest, organizerEventsListRequest, updateEventOrganizerRequest } from "../../services/organizerRequests";
 import { useDispatch, useSelector } from "react-redux";
 import { loaderActionEnd, loaderActionStart } from "../../store/loader/actions-creations";
 import { getUserAllData } from "../../services/authRequests";
@@ -10,6 +10,7 @@ import { State } from "../../store";
 import { useNavigate } from "react-router-dom";
 import EventFormModal from "./EventFormModel";
 import { useWebSocket } from "../../webSocket";
+import { errorToast, successToast } from "../../store/toast/actions-creation";
 
 interface TicketType {
     type: string;
@@ -86,7 +87,7 @@ const OrganizerDashboard = () => {
         ws.onclose = () => console.log("Disconnected ❌");
 
         return () => ws.close();
-        }, []);
+    }, []);
 
     // useEffect(() => {
     //     if (bookingMessages.length > 0) {
@@ -120,6 +121,19 @@ const OrganizerDashboard = () => {
             if (res.data) {
                 setEvents((prevEvents) => [...prevEvents, res.data]);
                 setIsModalOpen(false);
+                dispatch(
+                    successToast({
+                        toast: true,
+                        message: "Event Created Successfully !!",
+                    })
+                );
+            } else {
+                dispatch(
+                    errorToast({
+                        toast: true,
+                        message: "Something went wrong",
+                    })
+                );
             }
         });
     };
@@ -135,8 +149,43 @@ const OrganizerDashboard = () => {
                 );
                 setIsModalOpen(false);
                 setEditingEvent(null);
+                dispatch(
+                    successToast({
+                        toast: true,
+                        message: "Event Updated Successfully !!",
+                    })
+                );
+            } else {
+                dispatch(
+                    errorToast({
+                        toast: true,
+                        message: "Something went wrong",
+                    })
+                );
             }
         });
+    };
+
+    const handleDeleteEvent = (eventId: number) => {
+        if (!window.confirm("Are you sure you want to delete this event?")) return;
+
+        deleteEventOrganizerRequest(eventId)
+            .then((res) => {
+                setEvents((prevEvents) => prevEvents.filter((ev) => ev.id !== eventId));
+                successToast({
+                        toast: true,
+                        message: "Event Deleted Successfully !!",
+                    })
+
+            })
+            .catch((err) => {
+                dispatch(
+                    errorToast({
+                        toast: true,
+                        message: "Failed To delete",
+                    })
+                );
+            });
     };
 
     return (
@@ -146,14 +195,20 @@ const OrganizerDashboard = () => {
                 <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
                     🎟️ Organizer Dashboard
                 </h1>
-                <button
-                    onClick={() => {
-                        setIsModalOpen(true);
-                    }}
-                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
-                >
-                    ➕ Create Event
-                </button>
+                <div className="flex items-center space-x-4">
+                    <span className="text-lg font-medium text-gray-700">
+                        👤 {user?.email || "Guest"}
+                    </span>
+                    <button
+                        onClick={() => {
+                            setIsModalOpen(true);
+                        }}
+                        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
+                    >
+                        ➕ Create Event
+                    </button>
+                </div>
+
             </div>
 
             {/* Event Grid */}
@@ -192,10 +247,10 @@ const OrganizerDashboard = () => {
                                 </p>
                                 <span
                                     className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${event.status === "PUBLISHED"
-                                            ? "bg-green-100 text-green-700"
-                                            : event.status === "CANCELLED"
-                                                ? "bg-red-100 text-red-700"
-                                                : "bg-yellow-100 text-yellow-700"
+                                        ? "bg-green-100 text-green-700"
+                                        : event.status === "CANCELLED"
+                                            ? "bg-red-100 text-red-700"
+                                            : "bg-yellow-100 text-yellow-700"
                                         }`}
                                 >
                                     {event.status}
@@ -218,6 +273,12 @@ const OrganizerDashboard = () => {
                                     className="flex-1 bg-yellow-500 text-white px-3 py-2 rounded-lg hover:bg-yellow-600 transition"
                                 >
                                     Edit
+                                </button>
+                                <button
+                                    onClick={() => handleDeleteEvent(event.id)}
+                                    className="flex-1 bg-red-500 text-white px-3 py-2 rounded-lg hover:bg-red-600 transition"
+                                >
+                                    Delete
                                 </button>
                             </div>
                         </div>

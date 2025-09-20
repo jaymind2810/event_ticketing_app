@@ -21,7 +21,13 @@ export default function OrganizerEventDetail() {
     if (!event) return <p>Loading...</p>;
 
     return (
-        <div className="p-8 bg-gray-100 min-h-screen">
+        <div className="px-32 py-16 bg-gray-100 min-h-screen">
+            <div className="flex justify-between items-center mb-8">
+                <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+                    Event : {event.title}
+                </h1>
+                
+            </div>
             {/* Event Header */}
             <div className="bg-white shadow-lg rounded-2xl p-6 mb-8">
                 <h1 className="text-4xl font-bold text-gray-800 mb-2">{event.title}</h1>
