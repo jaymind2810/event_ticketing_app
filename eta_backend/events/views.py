@@ -88,6 +88,17 @@ class OrganizerEventDetailAPIView(APIView):
 
         serializer = EventDetailSerializer(event)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+    def delete(self, request, event_id):
+        try:
+            event = Event.objects.get(id=event_id, organizer=request.user)
+            event.delete()
+            return Response({"message": "Event deleted"}, status=status.HTTP_204_NO_CONTENT)
+        except Event.DoesNotExist:
+            return Response({"error": "Event not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 

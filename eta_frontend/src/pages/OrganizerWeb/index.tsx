@@ -172,10 +172,12 @@ const OrganizerDashboard = () => {
         deleteEventOrganizerRequest(eventId)
             .then((res) => {
                 setEvents((prevEvents) => prevEvents.filter((ev) => ev.id !== eventId));
-                successToast({
+                dispatch(
+                    successToast({
                         toast: true,
                         message: "Event Deleted Successfully !!",
                     })
+                );
 
             })
             .catch((err) => {
