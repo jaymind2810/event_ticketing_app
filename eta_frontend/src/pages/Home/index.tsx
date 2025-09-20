@@ -75,25 +75,6 @@ const HomePage = () => {
     }, []);
 
 
-
-    // const handleBooking = (eventId: number, ticketId: number, quantity: number) => {
-    //     const payload = {
-    //         event: eventId,
-    //         items: [{ ticket_type: ticketId, quantity }],
-    //     };
-
-    //     axios.post("/api/bookings/", payload, {
-    //         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    //     }).then((res) => {
-    //         alert("Booking successful!");
-    //         setIsBookingOpen(false);
-    //     }).catch((err) => {
-    //         console.error(err);
-    //         alert("Booking failed.");
-    //     });
-    // };
-
-
     return (
         <>
             <div className="p-8 bg-gray-50 min-h-screen">

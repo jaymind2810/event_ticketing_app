@@ -3,9 +3,9 @@ from .models import Booking, BookingItem, Event, TicketType
 
 class TicketTypeInline(admin.TabularInline):
     model = TicketType
-    extra = 1  # show 1 empty row by default
+    extra = 1 
     fields = ("name", "price", "total_quantity", "available_quantity")
-    # readonly_fields = ("available_quantity",)  # available is updated by system
+
 
 
 class EventAdmin(admin.ModelAdmin):
@@ -21,7 +21,6 @@ class EventAdmin(admin.ModelAdmin):
     list_filter = ("status", "location")
     search_fields = ("title", "description", "location", "organizer__email")
 
-    # Make some fields read-only in admin
     readonly_fields = ("created_at", "updated_at")
     inlines = [TicketTypeInline]
     
