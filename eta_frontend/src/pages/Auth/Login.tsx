@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux";
 import { loaderActionStart, loaderActionEnd } from "../../store/loader/actions-creations";
 import { successToast, errorToast } from "../../store/toast/actions-creation";
-import { loginSuccess } from "../../store/user/action-Creation";
+import { loginSuccess, setCurrentUser } from "../../store/user/action-Creation";
 import { signInRequest } from "../../services/authRequests";
 
 
@@ -35,7 +35,14 @@ export default function SignIn() {
                 localStorage.setItem("userId", res.data.id)
                 localStorage.setItem("email", res.data.email)
                 localStorage.setItem("role", res.data.role)
-                dispatch(loginSuccess(true))
+                // dispatch(loginSuccess(true))
+                dispatch(setCurrentUser({
+                    id: res.data.id,
+                    email: res.data.email,
+                    role: res.data.role,
+                    isLoggedIn: true,
+                }))
+
                 dispatch(loaderActionEnd())
                 dispatch(
                     successToast({
@@ -43,10 +50,14 @@ export default function SignIn() {
                         message: "Login Successfully !!",
                     })
                 );
-                if (res.data.role === "ATTENDEE") {
+
+                console.log(res.data.role, "========role0000-")
+                if (res.data.role?.trim().toUpperCase() === "ATTENDEE") {
                     navigate("/");
-                } else {
+                } else if (res.data.role?.trim().toUpperCase() === "ORGANIZER") {
                     navigate("/organizer/dashboard");
+                } else {
+                    navigate("/403");
                 }
             } else {
                 dispatch(
@@ -144,3 +155,5 @@ export default function SignIn() {
         </>
     )
 }
+
+

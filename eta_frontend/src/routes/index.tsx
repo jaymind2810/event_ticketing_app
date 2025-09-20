@@ -7,6 +7,8 @@ import OrganizerDashboard from "../pages/OrganizerWeb";
 import EventDetails from "../components/EventDetailPage";
 import MyBookings from "../pages/Home/MyBooking";
 import OrganizerEventDetail from "../pages/OrganizerWeb/EventDetails";
+import Unauthorized from "../components/UnAuthorise";
+import ProtectedRoute from "./ProtectedRoutes";
 // import { WebSocketProvider } from "../components/WebSocket";
 
 // ============== For AdminPanel ==================
@@ -78,43 +80,55 @@ export default function RouterList () {
 
                     <Route path="/" 
                         element={
+                            <ProtectedRoute allowedRoles={["ATTENDEE"]}>
                             <React.Suspense fallback={<><Loader/></>}>
                                 <HomePage />
                             </React.Suspense>
+                            </ProtectedRoute>
                         }
                         // errorElement={<ErrorBoundary/>}
                     />
                     <Route path="/user/bookings" 
                         element={
+                            <ProtectedRoute allowedRoles={["ATTENDEE"]}>
                             <React.Suspense fallback={<><Loader/></>}>
                                 <MyBookings />
                             </React.Suspense>
+                            </ProtectedRoute>
                         }
                         // errorElement={<ErrorBoundary/>}
                     />
 
                     <Route path="/organizer/dashboard" 
                         element={
+                            <ProtectedRoute allowedRoles={["ORGANIZER"]}>
                             <React.Suspense fallback={<><Loader/></>}>
                                 <OrganizerDashboard />
                             </React.Suspense>
+                            </ProtectedRoute>
                         }
                         // errorElement={<ErrorBoundary/>}
                     />
 
                     <Route path="/organizer/events/:id" 
                         element={
-                            <React.Suspense fallback={<><Loader/></>}>
-                                <OrganizerEventDetail />
-                            </React.Suspense>
+                            <ProtectedRoute allowedRoles={["ORGANIZER"]}>
+                                <React.Suspense fallback={<><Loader/></>}>
+                                    <OrganizerEventDetail />
+                                </React.Suspense>
+                            </ProtectedRoute>
                         } />
 
                     <Route path="/events/:id" 
                         element={
-                            <React.Suspense fallback={<><Loader/></>}>
-                                <EventDetails />
-                            </React.Suspense>
+                            <ProtectedRoute allowedRoles={["ORGANIZER"]}>
+                                <React.Suspense fallback={<><Loader/></>}>
+                                    <EventDetails />
+                                </React.Suspense>
+                            </ProtectedRoute>
                         } />
+
+                    <Route path="/403" element={<Unauthorized />} />
 
                    
 

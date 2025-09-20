@@ -8,6 +8,8 @@ from django.shortcuts import get_object_or_404
 
 
 class EventListCreateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
     def get(self, request):
         try:
             events = Event.objects.all()

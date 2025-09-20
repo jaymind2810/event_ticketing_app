@@ -8,7 +8,6 @@ export default function OrganizerEventDetail() {
     const { id } = useParams();
     const [event, setEvent] = useState<any>(null);
 
-    console.log(id, "--------eventId------------")
 
     useEffect(() => {
 

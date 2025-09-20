@@ -5,3 +5,5 @@ djangorestframework-simplejwt
 python-dotenv
 psycopg2-binary
 django-fernet-fields
+channels 
+channels-redis

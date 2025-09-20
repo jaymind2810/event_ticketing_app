@@ -109,6 +109,19 @@ export default function EventFormModal({
             className="w-full border rounded-lg px-3 py-2"
           />
 
+          <div>
+            <label className="block mb-1 font-semibold">Status</label>
+            <select
+            value={formData.status}
+            onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+            className="w-full border rounded-lg px-3 py-2"
+            >
+            <option value="DRAFT">Draft</option>
+            <option value="PUBLISHED">Published</option>
+            <option value="CANCELLED">Cancelled</option>
+            </select>
+        </div>
+
           {/* Ticket Types Section */}
           <div>
             <h3 className="text-lg font-semibold mb-2">Ticket Types</h3>
