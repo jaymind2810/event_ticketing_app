@@ -38,7 +38,7 @@ const OrganizerDashboard = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
-    // const bookingMessages = useWebSocket("/bookings/");
+    const bookingMessages = useWebSocket("/bookings/");
     // const bookingMessages = useWebSocket("ws://localhost:8000/bookings/");
     // new WebSocket(`ws://localhost:8000/ws/bookings/`);
     // const eventMessages = useWebSocket("/ws/events/");
@@ -47,8 +47,6 @@ const OrganizerDashboard = () => {
     const [events, setEvents] = useState<Event[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingEvent, setEditingEvent] = useState<Event | null>(null);
-
-    console.log(user, "----User========")
 
 
     useEffect(() => {
@@ -75,27 +73,27 @@ const OrganizerDashboard = () => {
         fetchUserData();
     }, [user?.isLoggedIn]);
 
-    useEffect(() => {
-        const ws = new WebSocket("ws://127.0.0.1:8000/ws/bookings/");
-
-        ws.onopen = () => console.log("Connected to bookings WebSocket ✅");
-        ws.onmessage = (e) => {
-            const data = JSON.parse(e.data);
-            console.log("Booking update:", data);
-            // You can update state here e.g. setBookings((prev) => [...prev, data])
-        };
-        ws.onclose = () => console.log("Disconnected ❌");
-
-        return () => ws.close();
-    }, []);
-
     // useEffect(() => {
-    //     if (bookingMessages.length > 0) {
-    //     const latest = bookingMessages[bookingMessages.length - 1];
-    //     console.log("Booking Update:", latest);
-    //     // Optionally refresh events list
-    //             }
-    // }, [bookingMessages]);
+    //     const ws = new WebSocket("ws://127.0.0.1:8000/ws/bookings/");
+
+    //     ws.onopen = () => console.log("Connected to bookings WebSocket ✅");
+    //     ws.onmessage = (e) => {
+    //         const data = JSON.parse(e.data);
+    //         console.log("Booking update:", data);
+    //         // You can update state here e.g. setBookings((prev) => [...prev, data])
+    //     };
+    //     ws.onclose = () => console.log("Disconnected ❌");
+
+    //     return () => ws.close();
+    // }, []);
+
+    useEffect(() => {
+        if (bookingMessages.length > 0) {
+        const latest = bookingMessages[bookingMessages.length - 1];
+        console.log("Booking Update:", latest);
+        // Optionally refresh events list
+                }
+    }, [bookingMessages]);
 
     useEffect(() => {
         const userId: any = localStorage.getItem("userId");

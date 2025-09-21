@@ -23,3 +23,6 @@ class BookingConsumer(AsyncWebsocketConsumer):
 
     async def booking_update(self, event):
         await self.send(text_data=json.dumps(event["data"]))
+        
+    async def booking_update_dashboard(self, event):
+        await self.send(text_data=json.dumps(event["data"]))

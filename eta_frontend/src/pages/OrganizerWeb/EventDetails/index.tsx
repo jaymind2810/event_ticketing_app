@@ -2,11 +2,24 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { getOrganizerEventsDetailsRequest } from "../../../services/organizerRequests";
+import { useWebSocket } from "../../../webSocket";
 
 
 export default function OrganizerEventDetail() {
     const { id } = useParams();
     const [event, setEvent] = useState<any>(null);
+
+    const bookingMessages = useWebSocket("/bookings/");
+
+    useEffect(() => {
+        if (bookingMessages.length > 0) {
+            const latest = bookingMessages[bookingMessages.length - 1];
+            console.log("Booking Update:", latest);
+            if (latest?.id === Number(id)) {
+                setEvent(latest)
+            }
+        }
+    }, [bookingMessages]);
 
 
     useEffect(() => {
@@ -45,6 +58,8 @@ export default function OrganizerEventDetail() {
             </div>
 
             {/* Ticket Sales */}
+            {event && (
+                <>
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">🎫 Ticket Sales</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 {event.ticket_types.map((ticket: any) => (
@@ -104,6 +119,8 @@ export default function OrganizerEventDetail() {
                     </div>
                 ))}
             </div>
+                </>
+            )}
         </div>
 
     );

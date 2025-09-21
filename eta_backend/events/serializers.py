@@ -2,6 +2,8 @@ from django.db import transaction
 from rest_framework import serializers
 from .models import Event, TicketType, Booking, BookingItem
 from users.models import User
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -32,6 +34,16 @@ class EventSerializer(serializers.ModelSerializer):
         event = Event.objects.create(**validated_data)
         for ticket in ticket_types_data:
             TicketType.objects.create(event=event, **ticket)
+            
+        channel_layer = get_channel_layer()
+        serializer = EventSerializer(event)
+        async_to_sync(channel_layer.group_send)(
+            "event_updates",
+            {
+                "type": "event_update",
+                "data": serializer.data
+            }
+        )
         return event
 
     def update(self, instance, validated_data):
@@ -41,7 +53,16 @@ class EventSerializer(serializers.ModelSerializer):
         instance.ticket_types.all().delete()
         for ticket in ticket_types_data:
             TicketType.objects.create(event=instance, **ticket)
-
+        
+        channel_layer = get_channel_layer()
+        serializer = EventSerializer(instance)
+        async_to_sync(channel_layer.group_send)(
+            "event_updates",
+            {
+                "type": "event_update",
+                "data": serializer.data
+            }
+        )
         return instance
 
 
@@ -82,6 +103,25 @@ class BookingSerializer(serializers.ModelSerializer):
             )
             
         booking.status = Booking.Status.CONFIRMED 
+        
+        channel_layer = get_channel_layer()
+        serializer = EventDetailSerializer(booking.event)
+        async_to_sync(channel_layer.group_send)(
+            "organizer_dashboard",
+            {
+                "type": "booking_update_dashboard",
+                "data": serializer.data
+            }
+        )
+        serializer = EventSerializer(booking.event)
+        async_to_sync(channel_layer.group_send)(
+            "event_updates",
+            {
+                "type": "event_update",
+                "data": serializer.data
+            }
+        )
+        
         booking.save()
         
         return booking

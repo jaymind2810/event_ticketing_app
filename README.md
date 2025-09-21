@@ -66,7 +66,7 @@ python3 manage.py createsuperuser
 
 - for run server
 ```bash
-python3 manage.py runserver
+daphne -b 0.0.0.0 -p 8000 eta_backend.asgi:application
 ```
 
 - Then, the development server will be started at http://127.0.0.1:8000/

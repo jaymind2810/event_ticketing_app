@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { State } from "../../store";
 import { useNavigate } from "react-router-dom";
 import { eventsListRequest } from "../../services/usersRequests";
+import { useWebSocket } from "../../webSocket";
 
 
 interface TicketType {
@@ -36,9 +37,24 @@ const HomePage = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
+    const eventsMessages = useWebSocket("/events/");
+
     const [events, setEvents] = useState<EventType[]>([]);
     const [selectedEvent, setSelectedEvent] = useState<EventType | null>();
     const [openBookingModal, setOpenBookingModal] = useState(false);
+
+    useEffect(() => {
+        if (eventsMessages.length > 0) {
+            const latest = eventsMessages[eventsMessages.length - 1];
+            console.log("Event Update:", latest);
+            setEvents((prev) => {
+                const exists = prev.find((e) => e.id === latest.id);
+                return exists
+                ? prev.map((e) => (e.id === latest.id ? latest : e))
+                : [...prev, latest];
+            });
+        }
+    }, [eventsMessages]);
 
     useEffect(() => {
         const fetchUserData = async () => {
